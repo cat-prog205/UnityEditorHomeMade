@@ -57,34 +57,20 @@ namespace UnityEditorHomeMade
             _entries = new List<Entry>(32);
             Seen.Clear();
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for (var i = 0; i < assemblies.Length; i++)
+            var types = new HashSet<Type>();
+            foreach (var type in TypeCache.GetTypesDerivedFrom<EdWindowBase>())
+                types.Add(type);
+            foreach (var type in TypeCache.GetTypesWithAttribute<ToolEntryAttribute>())
+                types.Add(type);
+            foreach (var method in TypeCache.GetMethodsWithAttribute<ToolEntryAttribute>())
             {
-                var assembly = assemblies[i];
-                if (!IsRelevantAssembly(assembly))
-                    continue;
-
-                Type[] types;
-                try
-                {
-                    types = assembly.GetTypes();
-                }
-                catch (ReflectionTypeLoadException ex)
-                {
-                    types = ex.Types;
-                }
-
-                if (types == null)
-                    continue;
-
-                for (var t = 0; t < types.Length; t++)
-                {
-                    var type = types[t];
-                    if (type == null)
-                        continue;
-                    CollectType(type);
-                }
+                var declaring = method.DeclaringType;
+                if (declaring != null)
+                    types.Add(declaring);
             }
+
+            foreach (var type in types)
+                CollectType(type);
 
             _entries.Sort(CompareEntries);
         }
@@ -186,34 +172,6 @@ namespace UnityEditorHomeMade
                 return;
 
             _entries.Add(entry);
-        }
-
-        static bool IsRelevantAssembly(Assembly assembly)
-        {
-            if (assembly.IsDynamic)
-                return false;
-
-            var name = assembly.GetName().Name;
-            if (string.IsNullOrEmpty(name))
-                return false;
-            if (name == "UnityEditorHomeMade.Editor")
-                return true;
-
-            try
-            {
-                var refs = assembly.GetReferencedAssemblies();
-                for (var i = 0; i < refs.Length; i++)
-                {
-                    if (refs[i].Name == "UnityEditorHomeMade.Editor")
-                        return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
-            return false;
         }
 
         static string FindMenuPath(Type type)

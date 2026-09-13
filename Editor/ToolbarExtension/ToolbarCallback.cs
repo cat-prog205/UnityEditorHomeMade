@@ -16,8 +16,8 @@ namespace UnityEditorHomeMade
     /// </summary>
     public static class ToolbarCallback
     {
-        const string LeftDockName = "HomeMadeToolbarLeft";
-        const string RightDockName = "HomeMadeToolbarRight";
+        const string LeftDockName = "HomeMadeToolbarLeft66";
+        const string RightDockName = "HomeMadeToolbarRight66";
         const int MaxSetupAttempts = 200;
 
         public static Action OnToolbarGUI;
@@ -80,15 +80,15 @@ namespace UnityEditorHomeMade
             if (parent == null)
                 return false;
 
-            var leftDock = CreateDock(LeftDockName, Justify.FlexEnd, paddingLeft: 4, paddingRight: 24);
-            var rightDock = CreateDock(RightDockName, Justify.FlexStart, paddingLeft: 24, paddingRight: 4);
+            var leftDock = CreateDock(LeftDockName, Justify.FlexEnd, paddingLeft: 8, paddingRight: 48);
+            var rightDock = CreateDock(RightDockName, Justify.FlexStart, paddingLeft: 48, paddingRight: 8);
 
             var middleIndex = parent.IndexOf(middleContainer);
             parent.Insert(middleIndex, leftDock);
             parent.Insert(middleIndex + 2, rightDock);
 
-            leftDock.Add(new IMGUIContainer(() => OnToolbarGUILeft?.Invoke()));
-            rightDock.Add(new IMGUIContainer(() => OnToolbarGUIRight?.Invoke()));
+            leftDock.Add(CreateImguiHost(() => OnToolbarGUILeft?.Invoke(), minWidth: 280f));
+            rightDock.Add(CreateImguiHost(() => OnToolbarGUIRight?.Invoke(), minWidth: 240f));
 
             _toolbarWindow = window;
             return true;
@@ -100,14 +100,16 @@ namespace UnityEditorHomeMade
             var right = root.Q(RightDockName);
             if (left != null)
             {
-                left.style.paddingLeft = 4;
-                left.style.paddingRight = 24;
+                left.style.paddingLeft = 8;
+                left.style.paddingRight = 48;
+                left.style.marginRight = 8;
             }
 
             if (right != null)
             {
-                right.style.paddingLeft = 24;
-                right.style.paddingRight = 4;
+                right.style.paddingLeft = 48;
+                right.style.paddingRight = 8;
+                right.style.marginLeft = 8;
             }
         }
 
@@ -120,12 +122,30 @@ namespace UnityEditorHomeMade
                 style =
                 {
                     flexGrow = 1,
+                    flexShrink = 0,
                     flexDirection = FlexDirection.Row,
                     flexBasis = 0,
                     justifyContent = justify,
                     alignItems = Align.Center,
                     paddingLeft = paddingLeft,
                     paddingRight = paddingRight,
+                    overflow = Overflow.Visible,
+                }
+            };
+        }
+
+        static IMGUIContainer CreateImguiHost(Action onGui, float minWidth)
+        {
+            return new IMGUIContainer(onGui)
+            {
+                pickingMode = PickingMode.Ignore,
+                style =
+                {
+                    flexGrow = 0,
+                    flexShrink = 0,
+                    minWidth = minWidth,
+                    height = 24,
+                    overflow = Overflow.Visible,
                 }
             };
         }

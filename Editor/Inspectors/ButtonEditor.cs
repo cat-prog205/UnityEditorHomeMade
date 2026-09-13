@@ -87,7 +87,7 @@ namespace UnityEditorHomeMade
                 var label = string.IsNullOrEmpty(attr.Label) ? ObjectNames.NicifyVariableName(method.Name) : attr.Label;
                 var parameters = method.GetParameters();
 
-                string key = $"{target.GetInstanceID()}_{method.Name}_{string.Join("_", parameters.Select(p => p.ParameterType.Name))}";
+                string key = $"{target.GetEntityId()}_{method.Name}_{string.Join("_", parameters.Select(p => p.ParameterType.Name))}";
 
                 if (!parameterCache.ContainsKey(key) || parameterCache[key].Length != parameters.Length)
                 {

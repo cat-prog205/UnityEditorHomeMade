@@ -10,7 +10,7 @@ namespace UnityEditorHomeMade
     [InitializeOnLoad]
     static class SceneSwitcherDropdown
     {
-        const string IconPath = "Assets/2DAbilitySystem/ThirdParty/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/scene.png";
+        const string IconPath = "Assets/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/scene.png";
 
         static string[] _scenePaths;
 

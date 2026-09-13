@@ -6,7 +6,7 @@ namespace UnityEditorHomeMade
     [InitializeOnLoad]
     static class TimeScaleResetButton
     {
-        const string IconPath = "Assets/2DAbilitySystem/ThirdParty/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/timescale.png";
+        const string IconPath = "Assets/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/timescale.png";
 
         static TimeScaleResetButton()
         {

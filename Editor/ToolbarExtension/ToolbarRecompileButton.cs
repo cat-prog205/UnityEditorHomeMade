@@ -7,7 +7,7 @@ namespace UnityEditorHomeMade
     [InitializeOnLoad]
     static class ToolbarRecompileButton
     {
-        const string IconPath = "Assets/2DAbilitySystem/ThirdParty/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/reset.png";
+        const string IconPath = "Assets/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/reset.png";
 
         static ToolbarRecompileButton()
         {

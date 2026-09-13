@@ -11,7 +11,7 @@ namespace UnityEditorHomeMade
     [InitializeOnLoad]
     public static class HierarchyExtension
     {
-        private static Dictionary<int, CachedItemData> _itemCache = new Dictionary<int, CachedItemData>();
+        private static Dictionary<EntityId, CachedItemData> _itemCache = new Dictionary<EntityId, CachedItemData>();
         
         private struct CachedItemData
         {
@@ -28,19 +28,17 @@ namespace UnityEditorHomeMade
 
         static HierarchyExtension()
         {
-            EditorApplication.hierarchyWindowItemOnGUI -= OnHierarchyItemGUI;
-            EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyItemGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= OnHierarchyItemGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += OnHierarchyItemGUI;
         }
 
-        private static void OnHierarchyItemGUI(int instanceID, Rect selectionRect)
+        private static void OnHierarchyItemGUI(EntityId entityId, Rect selectionRect)
         {
             var settings = HierarchySettings.Instance;
             if (settings == null || !settings.enabled)
                 return;
 
-#pragma warning disable CS0618 // InstanceIDToObject still works, EntityIdToObject is Unity 6.1+
-            var go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
-#pragma warning restore CS0618
+            var go = EditorUtility.EntityIdToObject(entityId) as GameObject;
             if (go == null)
                 return;
 
@@ -68,11 +66,11 @@ namespace UnityEditorHomeMade
 
         private static CachedItemData GetItemData(GameObject go, HierarchySettings settings)
         {
-            int instanceID = go.GetInstanceID();
+            var entityId = go.GetEntityId();
             string currentName = go.name;
             
             // Check if cached and name hasn't changed
-            if (_itemCache.TryGetValue(instanceID, out var cached))
+            if (_itemCache.TryGetValue(entityId, out var cached))
             {
                 if (cached.Name == currentName)
                     return cached;
@@ -84,7 +82,7 @@ namespace UnityEditorHomeMade
                 Type = DetermineItemType(currentName, settings),
                 Name = currentName
             };
-            _itemCache[instanceID] = data;
+            _itemCache[entityId] = data;
             return data;
         }
 

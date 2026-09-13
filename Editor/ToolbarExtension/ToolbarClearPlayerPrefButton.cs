@@ -6,7 +6,7 @@ namespace UnityEditorHomeMade
     [InitializeOnLoad]
     static class ToolbarClearPlayerPrefButton
     {
-        const string IconPath = "Assets/2DAbilitySystem/ThirdParty/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/trash.png";
+        const string IconPath = "Assets/UnityEditorHomeMade/Editor/ToolbarExtension/Icons/trash.png";
 
         static ToolbarClearPlayerPrefButton()
         {

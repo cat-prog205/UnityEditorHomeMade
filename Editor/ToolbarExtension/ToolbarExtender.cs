@@ -17,8 +17,9 @@ namespace UnityEditorHomeMade
         public static readonly List<Action> LeftToolbarGUI = new();
         public static readonly List<Action> RightToolbarGUI = new();
 
-        public const float ButtonWidth = 28f;
-        public const float PlayButtonGap = 28f;
+        public const float ButtonWidth = 32f;
+        public const float ItemGap = 6f;
+        public const float PlayButtonGap = 56f;
 
         static int _toolCount;
         static GUIStyle _commandStyle;
@@ -79,7 +80,11 @@ namespace UnityEditorHomeMade
         static void Invoke(List<Action> handlers)
         {
             for (var i = 0; i < handlers.Count; i++)
+            {
+                if (i > 0)
+                    GUILayout.Space(ItemGap);
                 handlers[i]?.Invoke();
+            }
         }
 
         // Pre-2021 toolbar: one IMGUI overlay covering the whole bar.

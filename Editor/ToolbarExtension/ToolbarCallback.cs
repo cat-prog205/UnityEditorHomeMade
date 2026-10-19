@@ -98,6 +98,10 @@ namespace UnityEditorHomeMade
         {
             var left = root.Q(LeftDockName);
             var right = root.Q(RightDockName);
+            // Docks created by an older version of this script had unclickable hosts.
+            left?.Query<IMGUIContainer>().ForEach(host => host.pickingMode = PickingMode.Position);
+            right?.Query<IMGUIContainer>().ForEach(host => host.pickingMode = PickingMode.Position);
+
             if (left != null)
             {
                 left.style.paddingLeft = 8;
@@ -136,9 +140,10 @@ namespace UnityEditorHomeMade
 
         static IMGUIContainer CreateImguiHost(Action onGui, float minWidth)
         {
+            // Must stay pickable: an ignored IMGUIContainer still repaints (hover, tooltips) but never gets clicks.
             return new IMGUIContainer(onGui)
             {
-                pickingMode = PickingMode.Ignore,
+                pickingMode = PickingMode.Position,
                 style =
                 {
                     flexGrow = 0,

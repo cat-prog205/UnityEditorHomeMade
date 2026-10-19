@@ -37,7 +37,8 @@ namespace UnityEditorHomeMade
                 return;
             }
 
-            PlayFirstBuildScene();
+            // Leave the toolbar GUI pass first: the save dialog and entering Play Mode don't like running inside it.
+            EditorApplication.delayCall += PlayFirstBuildScene;
         }
 
         static void PlayFirstBuildScene()

@@ -84,6 +84,9 @@ public sealed class MyToolWindow : EdWindowBase
 | `EdGUI` | `ConfirmButton` (green), `DangerButton` (red), `WarningButton`, `DangerButtonWithConfirm` (dialog), `XButton` (inline row delete), `CloseButton(Rect)`, `Header`, `HorizontalLine`, `BackgroundColorScope` |
 | `EdSection` | Collapsible header bar ("folder"); whole header is clickable; state persists across restarts |
 | `EdSearchField` | Toolbar search with clear button; `Matches(text)` for case-insensitive filtering |
+| `EdSplitView` | Two scroll panes + draggable splitter, Auto / SideBySide / Stacked (phone-style split); for content the user compares |
+| `EdWrapGrid` | Selection grid that wraps into rows to fit a narrow pane |
+| `EdGUI.Row` / `TakeRight` / `ClippedFoldout` / `ClippedLabel` | Fixed one-line rows: buttons cut from the right, title clipped with full text as tooltip |
 | `EdTheme` | Semantic palette (Danger/Confirm/Warning), auto-tuned for dark & light skins |
 | `EdStyles` | Lazily-created shared `GUIStyle`s (safe to touch only inside OnGUI) |
 | `EdPersist` | Prefixed `EditorPrefs`/`SessionState` wrappers for tool state |
@@ -100,3 +103,8 @@ public sealed class MyToolWindow : EdWindowBase
 8. **No heavy work in OnGUI**: cache, recompute on button press / `EndChangeCheck` only.
 9. Every icon-only button gets a tooltip; disabled beats hidden (`EditorGUI.DisabledScope` + tooltip).
 10. Keep menu paths under one root, e.g. `Tools/Game/...`.
+11. **Narrow-friendly**: a tool must stay usable at ~300px. Text left, buttons right; never put word-wrapped labels inside a horizontal group (rows overlap) — use `EdGUI.Row` + `TakeRight` + clipped text with tooltip. Wrap text only in vertical flow (`EdStyles.Wrap*`). Button grids use `EdWrapGrid`.
+12. **Compare side by side, not in tabs** (`EdSplitView`). Global actions (pause, refresh) are small toolbar items, not tabs.
+13. **No fixed width on text buttons** in the toolbar (labels get clipped); fixed widths only for icons/symbols.
+14. **Show the common case without clicking**: key details inline under a row, full detail on selection/foldout; filters such as "only modified".
+15. **Never mutate a list while drawing it**: queue the action and run it after the draw, then `Repaint()`.

@@ -69,6 +69,51 @@ namespace UnityEditorHomeMade
                 return GUILayout.Button(content, options);
         }
 
+        // ---------------------------------------------------------------- Rows (narrow-friendly)
+        // Word-wrapped labels/foldouts inside a horizontal group get one-line height and overlap
+        // the next row. For "text left, buttons right" rows use a fixed rect instead:
+        //   Rect row = EdGUI.Row();
+        //   if (EdGUI.CloseButton(EdGUI.TakeRight(ref row, 22f), "Remove")) ...
+        //   open = EdGUI.ClippedFoldout(row, open, longTitle);
+
+        /// <summary>One fixed-height row from the layout (default: one line).</summary>
+        public static Rect Row(float height = -1f)
+            => EditorGUILayout.GetControlRect(false, height < 0f ? EditorGUIUtility.singleLineHeight : height);
+
+        /// <summary>Cuts a rect of <paramref name="width"/> off the right of <paramref name="row"/>.</summary>
+        public static Rect TakeRight(ref Rect row, float width, float gap = 2f)
+        {
+            var rect = new Rect(row.xMax - width, row.y, width, row.height);
+            row.xMax -= width + gap;
+            return rect;
+        }
+
+        /// <summary>One-line foldout; long titles are clipped and shown in full as the tooltip.</summary>
+        // Arrow and label drawn separately: EditorGUI.Foldout clips its label to labelWidth.
+        public static bool ClippedFoldout(Rect rect, bool expanded, string title, bool bold = false)
+        {
+            const float arrow = 14f;
+            var arrowRect = new Rect(rect.x, rect.y, arrow, rect.height);
+            var labelRect = new Rect(rect.x + arrow, rect.y, Mathf.Max(0f, rect.width - arrow), rect.height);
+
+            expanded = EditorGUI.Foldout(arrowRect, expanded, GUIContent.none, true);
+
+            Event e = Event.current;
+            if (e.type == EventType.MouseDown && e.button == 0 && labelRect.Contains(e.mousePosition))
+            {
+                expanded = !expanded;
+                GUI.changed = true;
+                e.Use();
+            }
+
+            EditorGUI.LabelField(labelRect, TempContent(title, title), bold ? EdStyles.ClippedBoldLabel : EdStyles.ClippedLabel);
+            return expanded;
+        }
+
+        /// <summary>One-line label; clipped, full text as the tooltip.</summary>
+        public static void ClippedLabel(Rect rect, string text, GUIStyle style = null)
+            => EditorGUI.LabelField(rect, TempContent(text, text), style ?? EdStyles.ClippedLabel);
+
         // ---------------------------------------------------------------- Misc controls
 
         /// <summary>Bold section-less header label.</summary>
